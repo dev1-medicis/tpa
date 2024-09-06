@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  moodle:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - ./moodledata:/var/www/html/moodledata
+      - ./moodle:/var/www/html
+      - ./opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+    depends_on:
+      - db
+    environment:
+      - MOODLE_DATABASE_HOST=db
+      - MOODLE_DATABASE_NAME=moodle
+      - MOODLE_DATABASE_USER=moodleuser
+      - MOODLE_DATABASE_PASSWORD=moodlepassword
+      - MOODLE_DATABASE_TYPE=mysqli
+    user: root
+
+  db:
+    image: mysql:8.0
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: moodle
+      MYSQL_USER: moodleuser
+      MYSQL_PASSWORD: moodlepassword
+    ports:
+      - "3306:3306"
+
+volumes:
+  db_data:
+  moodledata:
